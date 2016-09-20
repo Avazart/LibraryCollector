@@ -10,7 +10,7 @@ ToolButton::ToolButton(QWidget * parent):QToolButton(parent)
 
 void ToolButton::mouseReleaseEvent(QMouseEvent * event)
 {
-    if(event->button() == Qt::LeftButton) // Если отжата правая клавиша
+    if(event->button() == Qt::LeftButton) 
     {
         emit leftMouseRelease(QCursor::pos());
     }
