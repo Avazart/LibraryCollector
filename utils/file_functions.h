@@ -3,7 +3,7 @@
 //---------------------------------------------------------------
 #include <QString>
 //---------------------------------------------------------------
-namespace My
+namespace LibraryCollector
 {
   bool isSubPath(const QString& dir,const QString& path);
   QString copyFile(const QString& filePath,

@@ -7,7 +7,7 @@
 #include <QFileInfo>
 #include <QDebug>
 //---------------------------------------------------------------------
-QString processFilePathByPid(My::PidType pid,QString& error)
+QString processFilePathByPid(LibraryCollector::PidType pid,QString& error)
 {
   HANDLE  process=
     OpenProcess(PROCESS_QUERY_INFORMATION|PROCESS_VM_READ, FALSE, pid);
@@ -32,7 +32,7 @@ QString processFilePathByPid(My::PidType pid,QString& error)
   return QString::fromWCharArray(bufFileName);
 }
 //------------------------------------------------------------------
-My::PidType My::processIdByFilePath(const QString& processFilePath,
+LibraryCollector::PidType LibraryCollector::processIdByFilePath(const QString& processFilePath,
                                     QString &error)
 {
   QFileInfo processFileInfo(processFilePath);
@@ -73,7 +73,7 @@ My::PidType My::processIdByFilePath(const QString& processFilePath,
   return -1;
 }
 //------------------------------------------------------------------
-QStringList My::librariesByPid(My::PidType pid, QString &error)
+QStringList LibraryCollector::librariesByPid(LibraryCollector::PidType pid, QString &error)
 {
   QStringList modules;
   MODULEENTRY32 mod;
@@ -104,7 +104,7 @@ QStringList My::librariesByPid(My::PidType pid, QString &error)
   return modules;
 }
 //---------------------------------------------------------------------
-QString My::processFilePathByPoint(long x, long y, QString& error)
+QString LibraryCollector::processFilePathByPoint(long x, long y, QString& error)
 {
   POINT point={x,y};
 

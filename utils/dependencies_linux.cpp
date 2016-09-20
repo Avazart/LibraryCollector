@@ -8,7 +8,7 @@
 
 #include "selectwindow_linux.h"
 //--------------------------------------------------------------------
-My::PidType My::processIdByFilePath(const QString& processFilePath,QString& error)
+LibraryCollector::PidType LibraryCollector::processIdByFilePath(const QString& processFilePath,QString& error)
 {
   QDir procDir("/proc");
   QStringList files= procDir.entryList();
@@ -32,7 +32,7 @@ My::PidType My::processIdByFilePath(const QString& processFilePath,QString& erro
   return -1;
 }
 //--------------------------------------------------------------------
-QStringList My::librariesByPid(My::PidType pid,QString& error)
+QStringList LibraryCollector::librariesByPid(LibraryCollector::PidType pid,QString& error)
 {
     QStringList modules;
     QDir procDir("/proc");
@@ -83,14 +83,14 @@ QStringList My::librariesByPid(My::PidType pid,QString& error)
    return QStringList();
 }
 //--------------------------------------------------------------------
-QString processFilePathByPid(My::PidType pid,QString& error)
+QString processFilePathByPid(LibraryCollector::PidType pid,QString& error)
 {
     QDir procDir("/proc");
     QStringList files= procDir.entryList();
     foreach(QString pidFileName,files)
     {
        bool isProcFile= false;
-       My::PidType id= pidFileName.toInt(&isProcFile);
+       LibraryCollector::PidType id= pidFileName.toInt(&isProcFile);
        if(isProcFile && id==pid)
        {
          QString processFilePath=
@@ -113,9 +113,9 @@ QString processFilePathByPid(My::PidType pid,QString& error)
     return QString();
 }
 //--------------------------------------------------------------------
-QString My::processFilePathBySelectedWindow(QString& error)
+QString LibraryCollector::processFilePathBySelectedWindow(QString& error)
 {
-  My::PidType pid= pidBySelectedWindow(error);
+  LibraryCollector::PidType pid= pidBySelectedWindow(error);
   if(error.isEmpty())
   {
     QString processFilePath= processFilePathByPid(pid,error);

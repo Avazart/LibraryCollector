@@ -14,6 +14,8 @@
 
 #include "dependencies.h"
 #include "file_functions.h"
+
+namespace Lc = LibraryCollector;
 //------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -175,15 +177,15 @@ void MainWindow::addError(const QString &text)
 //------------------------------------------------------
 MainWindow::dirType MainWindow::checkDirType(const QString &path)
 {
-  if(My::isSubPath(ui->lineEditLibsDir->text(),path))
+  if(Lc::isSubPath(ui->lineEditLibsDir->text(),path))
     return dtQtLibs;
-  else if(My::isSubPath(ui->lineEditPluginsDir->text(),path))
+  else if(Lc::isSubPath(ui->lineEditPluginsDir->text(),path))
     return dtQtPlugins;
-  else if(My::isSubPath(ui->lineEditQmlDir->text(),path))
+  else if(Lc::isSubPath(ui->lineEditQmlDir->text(),path))
     return dtQtQml;
 
 #ifdef Q_OS_WIN
-  if(My::isSubPath(systemDir_,path))
+  if(Lc::isSubPath(systemDir_,path))
     return dtSysLib;
 #elif defined Q_OS_LINUX
   if(My::isSubPath("/lib",path))
@@ -197,9 +199,9 @@ MainWindow::dirType MainWindow::checkDirType(const QString &path)
 //------------------------------------------------------
 void MainWindow::checkOtherLib(const QString &path,TreeWidgetItem *item)
 {
-    if(My::isMySQLlib(path)
+    if(Lc::isMySQLlib(path)
 #ifdef Q_OS_WIN
-       || My::isMSVClib(path)
+       || Lc::isMSVClib(path)
 #endif
        )
     {
@@ -226,7 +228,7 @@ void MainWindow::on_pushButtonUpdate_clicked()
   ui->treeWidget->clear();
   ui->treeWidget->setColumnCount(1);
 
-  My::PidType pid= 0;
+  Lc::PidType pid= 0;
   if( !processAlreadyStarted_ )
   {
     QFileInfo info(QFile(ui->lineEditFilePath->text()));
@@ -236,7 +238,7 @@ void MainWindow::on_pushButtonUpdate_clicked()
       addError(QString(tr("Executable file \"%1\" not exist")).arg(processFilePath));
 
     QString error;
-    pid=  My::processIdByFilePath(processFilePath,error);
+    pid=  Lc::processIdByFilePath(processFilePath,error);
     if(!error.isEmpty())
     {
       addError(error);
@@ -265,7 +267,7 @@ void MainWindow::on_pushButtonUpdate_clicked()
   }
 
   QString error;
-  QStringList modules= My::librariesByPid(pid,error);
+  QStringList modules= Lc::librariesByPid(pid,error);
   if(!error.isEmpty())
   {
     addError(error);
@@ -376,7 +378,7 @@ void MainWindow::on_pushButtonCopy_clicked()
             subDir.mkpath(".");
         }
 
-        QString newFilePath= My::copyFile(libFilePath,toDir,relDir);
+        QString newFilePath= Lc::copyFile(libFilePath,toDir,relDir);
 
         if (newFilePath.isEmpty())
         {
@@ -393,7 +395,7 @@ void MainWindow::on_pushButtonCopy_clicked()
           QString qmldirFile = fromQmlDir.absolutePath()+"/qmldir";
           if(QFileInfo(qmldirFile).exists())
           {
-             QString qmldirNewFilePath = My::copyFile(qmldirFile,toDir,relDir);
+             QString qmldirNewFilePath = Lc::copyFile(qmldirFile,toDir,relDir);
              if(qmldirNewFilePath.isEmpty())
              {
                addError(
@@ -498,7 +500,7 @@ void MainWindow::on_AimRelease(QPoint pos)
 #ifdef Q_OS_WIN
   QString error;
   QString processFilePath=
-      My::processFilePathByPoint(pos.x(),pos.y(),error);
+      Lc::processFilePathByPoint(pos.x(),pos.y(),error);
   if(error.isEmpty())
     ui->lineEditFilePath->setText(processFilePath);
   else

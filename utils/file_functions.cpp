@@ -5,41 +5,9 @@
 #include <QDir>
 #include <QRegExp>
 
-namespace My{
-//--------------------my:: --------------------------------------
-/*
-bool isSeparator(QChar ch)
+namespace LibraryCollector
 {
-  return ch == QChar::fromLatin1('\\') ||
-         ch == QChar::fromLatin1('/');
-}
 //---------------------------------------------------------------
-bool cmp(QChar ch1,QChar ch2)
-{
-  return ( ch1.toUpper() == ch2.toUpper() ) ||
-         ( isSeparator(ch1) && isSeparator(ch2) );
-}
-//---------------------------------------------------------------
-bool isSubPath(const QString& dir, const QString& path)
-{
-  const int length = dir.length();
-  if(!length && length >= path.length()) // FIX: http://www.cyberforum.ru/blogs/131347/blog2457-page2.html#comment10722
-    return false;
-
-  if( !isSeparator(dir[length-1]) &&
-      !isSeparator(path[length]) )
-    return false;
-
-  for(int i=0; i<length; ++i)
-    if( !cmp(dir[i],path[i]) )
-      return false;
-
-  return true;
-}
-//---------------------------------------------------------------
-*/
-//---------------------------------------------------------------
-// http://www.cyberforum.ru/blogs/131347/blog2457-page2.html#comment10723
 bool isSubPath(const QString &dir, const QString &path)
 {
    if ( dir.isEmpty() ) return false;
@@ -99,17 +67,6 @@ void makeSymLinks(const QString& filePath,
      }
   }
 }
-//void copySymLinks(const QString &filePath, const QString &destinationDir, const QString &baseDir)
-//{
-//  QFileInfo libFileInfo(filePath);
-//  QFileInfoList list= libFileInfo.dir().entryInfoList(QDir::Files);
-//  foreach (QFileInfo fileInfo, list)
-//  {
-//     if(fileInfo.isSymLink() &&
-//        QFileInfo(fileInfo.symLinkTarget())== libFileInfo )
-//     copyFile(fileInfo.absoluteFilePath(),destinationDir,baseDir);
-//  }
-//}
 //---------------------------------------------------------------
 bool isMSVClib(const QString& filePath)
 {

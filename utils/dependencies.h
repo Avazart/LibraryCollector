@@ -7,7 +7,7 @@
 //------------------------------------
 #ifdef Q_OS_WIN
   #include <Windows.h> // DWORD
-  namespace My
+  namespace LibraryCollector
   {
     typedef DWORD PidType;
   }
@@ -19,7 +19,7 @@
   }
 #endif
 //------------------------------------
-namespace My
+namespace LibraryCollector
 {
   QStringList librariesByPid(PidType pid,QString& error);
   PidType processIdByFilePath(const QString& processFilePath, QString& error);
