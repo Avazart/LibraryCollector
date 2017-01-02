@@ -41,7 +41,8 @@ win32|win64{
 
 linux{
   HEADERS += utils/selectwindow_linux.h
-  SOURCES += utils/dependencies_linux.cpp
+  SOURCES += utils/selectwindow_linux.cpp \
+       utils/dependencies_linux.cpp
 
   LIBS+= -lX11 -lXmu
 }

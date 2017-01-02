@@ -188,9 +188,9 @@ MainWindow::dirType MainWindow::checkDirType(const QString &path)
   if(Lc::isSubPath(systemDir_,path))
     return dtSysLib;
 #elif defined Q_OS_LINUX
-  if(My::isSubPath("/lib",path))
+  if(Lc::isSubPath("/lib",path))
     return dtSysLib;
-  if(My::isSubPath("/usr/lib",path))
+  if(Lc::isSubPath("/usr/lib",path))
     return dtUsrLib;
 #endif
 
@@ -407,7 +407,7 @@ void MainWindow::on_pushButtonCopy_clicked()
         }
 
         #ifdef Q_OS_LINUX
-          My::makeSymLinks(libFilePath,newFilePath);
+          Lc::makeSymLinks(libFilePath,newFilePath);
         #endif
       }
     }
@@ -523,7 +523,7 @@ void MainWindow::on_toolButtonAim_clicked()
 #ifdef Q_OS_LINUX
   QString error;
   QString processFilePath=
-      My::processFilePathBySelectedWindow(error);
+      Lc::processFilePathBySelectedWindow(error);
   if(error.isEmpty())
     ui->lineEditFilePath->setText(processFilePath);
   else

@@ -70,8 +70,8 @@ private:
   QString systemDir_;
   TreeWidgetItem *itemSystem_;
 #elif defined Q_OS_LINUX
-  MyTreeWidgetItem *itemUsrLib_;
-  MyTreeWidgetItem *itemSysLib_;
+  TreeWidgetItem *itemUsrLib_;
+  TreeWidgetItem *itemSysLib_;
 #endif
 
   TreeWidgetItem *itemOther_;

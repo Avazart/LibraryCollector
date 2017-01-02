@@ -13,7 +13,7 @@
   }
 #elif defined Q_OS_LINUX
   #include <sys/types.h> // pid_t
-  namespace My
+  namespace LibraryCollector
   {
     typedef pid_t PidType;
   }
