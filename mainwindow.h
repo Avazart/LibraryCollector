@@ -59,7 +59,6 @@ private:
     void loadSettings();
     void saveSettings();
     LibraryCollector::PidType startedProcessId();
-    QString enviromentValue(const QString& name);
     QSharedPointer<QJSEngine> createJSEngine(const QString &scriptFileName);
     QString currentJsScript()const;
 
@@ -71,10 +70,8 @@ private:
   QProcess* process_;
   bool processAlreadyStarted_;
 
-  QString qtDir_;
+  //QString qtDir_;
   QString systemRoot_;
-
-  QProcessEnvironment enviroment_;
 
   /* JS */
   Log* log_;

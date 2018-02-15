@@ -114,9 +114,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBoxMakeSubdirs">
+       <widget class="QCheckBox" name="checkBoxAddPlugins">
         <property name="text">
-         <string>make subdirs &quot;lib&quot; , &quot;plugins&quot; and &quot;qml&quot;</string>
+         <string>add plugins to enviroment</string>
         </property>
        </widget>
       </item>

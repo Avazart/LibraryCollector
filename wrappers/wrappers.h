@@ -55,7 +55,7 @@ public:
   Q_INVOKABLE void clearGroups();
   Q_INVOKABLE void clearLibs();
 
-  Q_INVOKABLE void simplify();
+  Q_INVOKABLE void hideEmptyGroups();
 
 private:
    QTreeWidget* treeWidget_;
@@ -79,6 +79,9 @@ public:
    Q_INVOKABLE static bool patchFile(const QString& fileName,
                                     const QByteArray& valueName,
                                     const QByteArray& newValue);
+
+   Q_INVOKABLE void makeSymLinks(const QString& filePath,
+                            const QString &newFilePath);
 };
 
 

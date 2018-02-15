@@ -10,13 +10,19 @@ Log::Log(QTextEdit *parent)
 {
 
 }
-
+//-----------------------------------------------------------------------------------------
 void Log::addInfo(const QString &text,QString color)
 {
-  textEdit_->append(QString("<span style='color: %2;'>%1</span>").arg(text).arg(color));
+  textEdit_->moveCursor(QTextCursor::End);
+
+  QTextCharFormat format = textEdit_->currentCharFormat();
+  format.setForeground(QBrush(QColor(color)));
+  textEdit_->setCurrentCharFormat(format);
+
+  textEdit_->insertPlainText(text+"\n");
   textEdit_->moveCursor(QTextCursor::End);
 }
-
+//-----------------------------------------------------------------------------------------
 void Log::addError(const QString &text)
 {
   addInfo(text,"red");
@@ -129,7 +135,7 @@ void Tree::clearLibs()
   }
 }
 //--------------------------------------------------------------------------------------
-void Tree::simplify()
+void Tree::hideEmptyGroups()
 {
   for(int groupIndex=0; groupIndex<treeWidget_->topLevelItemCount(); ++groupIndex)
   {
@@ -265,3 +271,14 @@ bool Utils::patchFile(const QString &fileName,
   }
   return false;
 }
+//---------------------------------------------------------------------------
+void Utils::makeSymLinks(const QString &filePath, const QString &newFilePath)
+{
+  #ifdef Q_OS_LINUX
+     LibraryCollector::makeSymLinks(filePath,newFilePath);
+  #else
+     Q_UNUSED(filePath)
+     Q_UNUSED(newFilePath)
+  #endif
+}
+//---------------------------------------------------------------------------

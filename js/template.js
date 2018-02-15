@@ -1,3 +1,5 @@
+
+
 function init()
 {
 	log.addInfo("init()","green");

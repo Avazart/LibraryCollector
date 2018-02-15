@@ -20,8 +20,7 @@
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow),
-  processAlreadyStarted_(false),
-  enviroment_(QProcessEnvironment::systemEnvironment())
+  processAlreadyStarted_(false)
 {
   ui->setupUi(this);
 
@@ -76,23 +75,36 @@ void MainWindow::closeEvent(QCloseEvent *event)
 //------------------------------------------------------------------------------
 void MainWindow::on_pushButtonRun_clicked()
 {
-  enviroment_ = QProcessEnvironment::systemEnvironment();
+  const QString qtDir = ui->lineEditQtDir->text();
 
-  QChar pathSeparator= ';';
+  QProcessEnvironment enviroment =
+      QProcessEnvironment::systemEnvironment();
+
+  QChar valuesSeparator= ';';
 #ifdef Q_OS_WIN
-  systemRoot_ = enviroment_.value("SYSTEMROOT");
-  pathSeparator= ';';
+  systemRoot_ = enviroment.value("SYSTEMROOT");
+  valuesSeparator= ';';
 #elif defined Q_OS_LINUX
-  pathSeparator= ':';
+  valuesSeparator= ':';
 #endif
 
-  if(ui->checkBoxAddBin->checkState()==Qt::Checked)
+  if(ui->checkBoxAddBin->isChecked())
   {
-    //   QString path= enviroment_.value("PATH");
-    //   enviroment.insert("PATH",path+pathSeparator+ui->lineEditLibsDir->text());
+     const QString pathValues= enviroment.value("PATH");
+     const QString qtBinDir = QDir::toNativeSeparators(qtDir+"/bin");
+     const QString newPathValues = pathValues+valuesSeparator+ qtBinDir;
+     enviroment.insert("PATH",newPathValues);
+     // enviroment.insert("QTDIR",QDir::toNativeSeparators(qtDir));
+     // Linux  LD_LIBRARY_PATH ???
   }
 
-  process_->setEnvironment(enviroment_.toStringList());
+  if(ui->checkBoxAddPlugins->isChecked())
+  {
+     const QString qtPluginsDir =  QDir::toNativeSeparators(qtDir+"/plugins");
+     enviroment.insert("QT_PLUGIN_PATH",qtPluginsDir);
+  }
+
+  process_->setEnvironment(enviroment.toStringList());
   process_->start("\""+ui->lineEditFilePath->text()+"\"");
 }
 //------------------------------------------------------
@@ -113,6 +125,8 @@ void MainWindow::on_pushButtonUpdate_clicked()
 //  ui->treeWidget->setColumnCount(1);
 
   /* call update in JS */
+  jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text());
+
   QJSValue jsUpdateFunction = jsEngine_->globalObject().property("update");
   QJSValue result =
       jsUpdateFunction.call( QJSValueList()<<jsEngine_->toScriptValue(libs));
@@ -154,6 +168,8 @@ void MainWindow::on_pushButtonCopy_clicked()
     exeFile.copy(toDir+QDir::separator()+exeFileInfo.fileName());
 
   /* call copy in js */
+  jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text());
+
   QJSValue jsCopyFunction = jsEngine_->globalObject().property("copy");
   QJSValue result = jsCopyFunction.call( QJSValueList()<<toDir);
   if(result.isError())
@@ -222,6 +238,15 @@ QSharedPointer<QJSEngine> MainWindow::createJSEngine(const QString &scriptFileNa
 
   jsEngine->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text());
   jsEngine->globalObject().setProperty("SYSTEMROOT",systemRoot_);
+
+  QString os = "";
+  #ifdef Q_OS_WIN
+     os = "win";
+  #elif defined Q_OS_LINUX
+     os = "linux";
+  #endif
+
+  jsEngine->globalObject().setProperty("os",os);
 
   /* call init in js */
   QJSValue jsInitFunction = jsEngine->globalObject().property("init");
@@ -293,11 +318,6 @@ void MainWindow::clear()
 {
   ui->treeWidget->clear();
   ui->lineEditFilePath->clear();
-}
-//-----------------------------------------------------------------------------
-QString MainWindow::enviromentValue(const QString &name)
-{
-  return enviroment_.value(name);
 }
 //-----------------------------------------------------------------------------
 void MainWindow::processError(QProcess::ProcessError )
@@ -449,10 +469,10 @@ void MainWindow::loadSettings()
 
     QDir dir(args[4]);
     dir.cdUp();
-    qtDir_ = dir.absolutePath();
+    QString qtDir = dir.absolutePath();
 
     ui->lineEditFilePath->setText(fullName);
-    ui->lineEditQtDir->setText(qtDir_);
+    ui->lineEditQtDir->setText(qtDir);
     process_->setWorkingDirectory(buildPath);
   } //
   else
@@ -468,8 +488,8 @@ void MainWindow::loadSettings()
   settings.beginGroup(tr("Other"));
   ui->checkBoxAddBin->setCheckState(
         (Qt::CheckState)settings.value("addLibsDirToEnvironment").toInt() );
-  ui->checkBoxMakeSubdirs->setCheckState(
-        (Qt::CheckState)settings.value("makeSubdirs").toInt() );
+  ui->checkBoxAddPlugins->setCheckState(
+        (Qt::CheckState)settings.value("addPluginsDirToEnvironment").toInt() );
   settings.endGroup();
 
 #ifdef Q_OS_WIN
@@ -490,7 +510,7 @@ void MainWindow::saveSettings()
 
   settings.beginGroup("Other");
   settings.setValue("addLibsDirToEnvironment", ui->checkBoxAddBin->checkState());
-  settings.setValue("makeSubdirs", ui->checkBoxMakeSubdirs->checkState());
+  settings.setValue("addPluginsDirToEnvironment", ui->checkBoxAddPlugins->checkState());
   settings.endGroup();
 }
 //-----------------------------------------------------------------------------

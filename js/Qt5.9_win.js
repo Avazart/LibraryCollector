@@ -3,6 +3,9 @@ var binGroupIndex = 0;
 var pluginsGroupIndex = 0;
 var qmlGroupIndex = 0;
 var resourceGroupIndex = 0;
+var msvcGroupIndex = 0;
+var dataBaseGroupIndex = 0;
+var sslGroupIndex = 0;
 var systemRootGroupIndex = 0;
 var otherGroupIndex = 0;
 var systemRoot = 0;
@@ -11,12 +14,15 @@ function init()
 {
 	tree.clearGroups();
 
-	binGroupIndex = tree.addGroup("%QTDIR%/bin");
-	pluginsGroupIndex = tree.addGroup("%QTDIR%/plugins");
-	qmlGroupIndex = tree.addGroup("%QTDIR%/qml");
-	resourceGroupIndex = tree.addGroup("%QTDIR%/resources");
-	systemRootGroupIndex = tree.addGroup("SYSTEMROOT");
-	otherGroupIndex = tree.addGroup("Other");
+	binGroupIndex = tree.addGroup("bin");
+	pluginsGroupIndex = tree.addGroup("plugins");
+	qmlGroupIndex = tree.addGroup("qml");
+	resourceGroupIndex = tree.addGroup("resources");
+	msvcGroupIndex = tree.addGroup("msvc");
+	dataBaseGroupIndex= tree.addGroup("databases");
+	sslGroupIndex = tree.addGroup("ssl");
+	systemRootGroupIndex = tree.addGroup("system");
+	otherGroupIndex = tree.addGroup("other");
 }
 //-----------------------------------------------------------------------------------------
 function update(libs)
@@ -50,19 +56,26 @@ function update(libs)
 			if (fileExists(qmlDirFile))
 				tree.addLib(qmlGroupIndex, qmlDirFile, true);
 		}
-		else if (utils.isSubPath(systemRoot, libs[i]))
-			tree.addLib(systemRootGroupIndex, libs[i], isMSVClib(libs[i]) || isMySQL(libs[i]));
+		else if (isMSVClib(libs[i]))
+			tree.addLib(msvcGroupIndex, libs[i],true)
+		else if (isMySQL(libs[i]))
+				tree.addLib(dataBaseGroupIndex, libs[i],true);
+    else if (isSSL(libs[i]))
+				tree.addLib(sslGroupIndex, libs[i],true);      
+	  else if (utils.isSubPath(systemRoot, libs[i]))
+				tree.addLib(systemRootGroupIndex, libs[i]);
 		else
-			tree.addLib(otherGroupIndex, libs[i], isMSVClib(libs[i]) || isMySQL(libs[i]));
+				tree.addLib(otherGroupIndex, libs[i]);
 	}
 
 	tree.expandGroup(binGroupIndex);
 	tree.expandGroup(pluginsGroupIndex);
 	tree.expandGroup(qmlGroupIndex);
-	tree.expandGroup(systemRootGroupIndex);
-	tree.expandGroup(otherGroupIndex);
+	tree.expandGroup(msvcGroupIndex);
+	// tree.expandGroup(systemRootGroupIndex);
+	// tree.expandGroup(otherGroupIndex);
 
-	tree.simplify();
+	tree.hideEmptyGroups();
 }
 //-----------------------------------------------------------------------------------------
 function copy(toDir)
@@ -81,29 +94,29 @@ function copyLib(groupName, libName, toDir)
 {
 	// Определение относительно какой папки копировать
 	var relDir = '';
-	if (groupName == '%QTDIR%/plugins' ||
-	        groupName == '%QTDIR%/qml' ||
-	        groupName == '%QTDIR%/resources')
+	if (groupName == 'plugins' ||
+	        groupName == 'qml' ||
+	        groupName == 'resources')
 		relDir = QTDIR;
 
 	// Копирование библиотеки
 	var newFileName = utils.copyFile(libName, toDir, relDir);
-	if (!newFileName)
+	if(!newFileName)
 	{
 		log.addError('Error: Can`t copy file "' + libName + '" to "' + toDir + '"');
 		return;
 	}
 
 	// Патчинг Qt5Core, изменение вшитой переменной qt_prfxpath=.
-	if (isQtCoreLib(libName))
+	// http://www.riuson.com/blog/post/qtcore-hard-coded-paths
+	if(isQtCoreLib(libName))
 	{
 		if (!utils.patchFile(newFileName, "qt_prfxpath=", "."))
-			log.addError('Не удалось пропатчить "' + newFileName + '"');
+			log.addError('Can not patch "' + newFileName + '"');
 	}
 
-	//        #ifdef Q_OS_LINUX
-	//          Lc::makeSymLinks(libFilePath,newFilePath);
-	//        #endif
+	if(os=="linux")
+		utils.makeSymLinks(libFilePath,newFilePath);
 }
 //-----------------------------------------------------------------------------------------
 //    Вспомогательные ф-ции
@@ -147,19 +160,24 @@ function isMSVClib(libName)
 	return libName.match(/msvc[rp]\d+D?/i) ||
 	       libName.match(/vccorlib\d+D?/i) ||
 	       libName.match(/vcruntime\d+D?/i)
-       }
+}
 
-       function isMySQL(libName)
+function isMySQL(libName)
 {
 	return baseName(libName).match(/libmysql\d*/i) // libmysql.dll
-       }
+}
 
-       function isQtCoreLib(libName)
+function isSSL(libName)
+{
+	return baseName(libName).match(/libeay|libssl|ssleay\d*/i) // libeay32.dll  libssl32.dll ssleay32.dll
+}
+
+function isQtCoreLib(libName)
 {
 	return baseName(libName).match(/Qt\d*CoreD?/i) // Qt5Core.dll
-       }
+}
 
-       function isWebEngineLib(libName)
+function isWebEngineLib(libName)
 {
 	return baseName(libName).match(/Qt\d+WebEngineCore.*?/i); // Qt5WebEngineCore.dll Qt5WebEngineWidgets.dll
 }
