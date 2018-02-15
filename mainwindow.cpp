@@ -109,8 +109,8 @@ void MainWindow::on_pushButtonUpdate_clicked()
   }
   log_->addInfo(QString(tr("Found %1 libs.")).arg(libs.size()) );
 
-  ui->treeWidget->clear();
-  ui->treeWidget->setColumnCount(1);
+// ui->treeWidget->clear();
+//  ui->treeWidget->setColumnCount(1);
 
   /* call update in JS */
   QJSValue jsUpdateFunction = jsEngine_->globalObject().property("update");
@@ -222,6 +222,18 @@ QSharedPointer<QJSEngine> MainWindow::createJSEngine(const QString &scriptFileNa
 
   jsEngine->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text());
   jsEngine->globalObject().setProperty("SYSTEMROOT",systemRoot_);
+
+  /* call init in js */
+  QJSValue jsInitFunction = jsEngine->globalObject().property("init");
+  result = jsInitFunction.call( QJSValueList());
+  if(result.isError())
+  {
+      log_->addError(
+            QString("[js] Error at line #%1 : %2")
+            .arg(result.property("lineNumber").toInt())
+            .arg(result.toString())
+                 );
+  }
 
   return jsEngine;
 }
@@ -391,7 +403,8 @@ void MainWindow::on_pushButtonCopyToClipboard_clicked()
 void MainWindow::on_pushButtonClear_clicked()
 {
   ui->textEditLog->clear();
-  ui->treeWidget->clear();
+  //tree_->clearLibs();
+  on_comboBoxScript_currentIndexChanged("");
 }
 //-----------------------------------------------------------------------------
 void MainWindow::on_toolButtonScript_clicked()

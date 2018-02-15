@@ -51,6 +51,12 @@ public:
 
   Q_INVOKABLE bool libIsChecked(int groupIndex,int libIndex)const;
 
+
+  Q_INVOKABLE void clearGroups();
+  Q_INVOKABLE void clearLibs();
+
+  Q_INVOKABLE void simplify();
+
 private:
    QTreeWidget* treeWidget_;
 };

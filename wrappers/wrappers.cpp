@@ -110,6 +110,37 @@ bool Tree::libIsChecked(int groupIndex, int libIndex) const
   return libItem->checkState(0)==Qt::Checked;
 }
 //--------------------------------------------------------------------------------------
+void Tree::clearGroups()
+{
+  treeWidget_->clear();
+  treeWidget_->setColumnCount(1);
+}
+//--------------------------------------------------------------------------------------
+void Tree::clearLibs()
+{
+  for(int groupIndex=0; groupIndex<treeWidget_->topLevelItemCount(); ++groupIndex)
+  {
+    QTreeWidgetItem* groupItem = treeWidget_->topLevelItem(groupIndex);
+    if(groupItem==Q_NULLPTR)
+      return;
+
+    foreach(QTreeWidgetItem* child, groupItem->takeChildren())
+      delete child;
+  }
+}
+//--------------------------------------------------------------------------------------
+void Tree::simplify()
+{
+  for(int groupIndex=0; groupIndex<treeWidget_->topLevelItemCount(); ++groupIndex)
+  {
+    QTreeWidgetItem* groupItem = treeWidget_->topLevelItem(groupIndex);
+    if(groupItem==Q_NULLPTR)
+      return;
+
+    groupItem->setHidden(groupItem->childCount()==0);
+  }
+}
+//--------------------------------------------------------------------------------------
 //   Utils
 //--------------------------------------------------------------------------------------
 Utils::Utils(QObject *parent)
