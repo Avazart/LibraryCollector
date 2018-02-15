@@ -8,7 +8,9 @@
 
 #include "selectwindow_linux.h"
 //--------------------------------------------------------------------
-LibraryCollector::PidType LibraryCollector::processIdByFilePath(const QString& processFilePath,QString& error)
+LibraryCollector::PidType
+   LibraryCollector::processIdByFilePath(const QString& processFilePath,
+                                         QString& error)
 {
   QDir procDir("/proc");
   QStringList files= procDir.entryList();
@@ -32,7 +34,8 @@ LibraryCollector::PidType LibraryCollector::processIdByFilePath(const QString& p
   return -1;
 }
 //--------------------------------------------------------------------
-QStringList LibraryCollector::librariesByPid(LibraryCollector::PidType pid,QString& error)
+QStringList LibraryCollector::librariesByPid(LibraryCollector::PidType pid,
+                                             QString& error)
 {
     QStringList modules;
     QDir procDir("/proc");
@@ -83,7 +86,8 @@ QStringList LibraryCollector::librariesByPid(LibraryCollector::PidType pid,QStri
    return QStringList();
 }
 //--------------------------------------------------------------------
-QString processFilePathByPid(LibraryCollector::PidType pid,QString& error)
+QString processFilePathByPid(LibraryCollector::PidType pid,
+                             QString& error)
 {
     QDir procDir("/proc");
     QStringList files= procDir.entryList();

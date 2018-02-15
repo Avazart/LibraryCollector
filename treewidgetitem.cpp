@@ -7,7 +7,7 @@ TreeWidgetItem::TreeWidgetItem(QTreeWidget *parent) :
 }
 
 
-TreeWidgetItem::TreeWidgetItem(TreeWidgetItem * parent, int type)
+TreeWidgetItem::TreeWidgetItem(QTreeWidgetItem *parent, int type)
   :QTreeWidgetItem(parent,type)
 {
 

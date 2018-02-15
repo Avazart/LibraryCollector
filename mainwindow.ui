@@ -6,33 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
-    <height>527</height>
+    <width>495</width>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>LibraryCollector</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="4" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEditToDir"/>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEditPluginsDir"/>
-      </item>
-      <item row="0" column="4">
-       <widget class="QToolButton" name="toolButtonFilePath">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEditFilePath"/>
-      </item>
+     <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="labelFilePath">
         <property name="text">
@@ -40,72 +24,81 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="4">
-       <widget class="QToolButton" name="toolButtonTo">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEditFilePath"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="ToolButton" name="toolButtonAim">
+        <property name="text">
+         <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QToolButton" name="toolButtonFilePath">
         <property name="text">
          <string>...</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="labelTo">
-        <property name="text">
-         <string>to:</string>
-        </property>
-       </widget>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEditQtDir"/>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="labelPlugins">
-        <property name="text">
-         <string>plugins:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="4">
-       <widget class="QToolButton" name="toolButtonPlugins">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
+      <item row="1" column="3">
        <widget class="QToolButton" name="toolButtonLibs">
         <property name="text">
          <string>...</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelLibs">
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelTo">
         <property name="text">
-         <string>bin/lib:</string>
+         <string>to:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="4">
-       <widget class="QToolButton" name="toolButtonQml">
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEditToDir"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="QToolButton" name="toolButtonTo">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>QTDIR:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="comboBoxScript">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="maxVisibleItems">
+         <number>50</number>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QToolButton" name="toolButtonScript">
         <property name="text">
          <string>...</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="labelScript">
         <property name="text">
-         <string>qml:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEditQmlDir"/>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEditLibsDir"/>
-      </item>
-      <item row="0" column="2">
-       <widget class="ToolButton" name="toolButtonAim">
-        <property name="text">
-         <string>+</string>
+         <string>script:</string>
         </property>
        </widget>
       </item>
@@ -235,19 +228,13 @@ to clipboard</string>
      </widget>
     </item>
    </layout>
-   <zorder>splitter</zorder>
-   <zorder>layoutWidget_3</zorder>
-   <zorder>checkBoxMakeSubdirs</zorder>
-   <zorder>checkBoxMakeSubdirs</zorder>
-   <zorder>checkBoxAddBin</zorder>
-   <zorder>checkBoxAddBin</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>519</width>
+     <width>495</width>
      <height>21</height>
     </rect>
    </property>

@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets qml
 
 TARGET = LibraryCollector
 TEMPLATE = app
@@ -16,24 +16,30 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     treewidgetitem.cpp \
     toolbutton.cpp \
-    utils/file_functions.cpp
+    utils/file_functions.cpp \
+    wrappers/fileinfo.cpp \
+    wrappers/wrappers.cpp \
+    wrappers/dir.cpp
 
 HEADERS  += \
     mainwindow.h\
     treewidgetitem.h \
     toolbutton.h \
     utils/dependencies.h \
-    utils/file_functions.h
+    utils/file_functions.h \
+    wrappers/wrappers.h \
+    wrappers/fileinfo.h \
+    wrappers/dir.h
 
 
 FORMS    += \
     mainwindow.ui
 
-INCLUDEPATH += utils
+INCLUDEPATH += utils wrappers
 
 win32|win64{
   SOURCES += utils/dependencies_win.cpp
-  LIBS+= -lpsapi
+  LIBS+= -lpsapi -lUser32
 
   RC_FILE=  rc.rc
   OTHER_FILES+= rc.rc

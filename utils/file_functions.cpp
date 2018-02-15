@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QRegExp>
 
+#include <QDebug>
+
 namespace LibraryCollector
 {
 //---------------------------------------------------------------
@@ -23,12 +25,16 @@ bool isSubPath(const QString &dir, const QString &path)
    return !nativePath.indexOf( nativeDir, Qt::CaseInsensitive );
 }
 //---------------------------------------------------------------
-QString copyFile(const QString &filePath, const QString &destinationDir, const QString &baseDir)
+QString copyFile(const QString &filePath,
+                 const QString &destinationDir,
+                 const QString &baseDir)
 {
   QFile file(filePath);
-  QDir  destDir(destinationDir);    // Куда копируем
   QFileInfo info(file);
   QDir fileDir= info.absoluteDir(); // директория DLL-ки
+
+  QDir destDir(destinationDir);    // Куда копируем
+
   QString newFilePath;
   bool success= false;
 
@@ -42,6 +48,9 @@ QString copyFile(const QString &filePath, const QString &destinationDir, const Q
   QDir  relDir(baseDir); // Полный путь к подпапке (относительно папки)
   QString path= relDir.relativeFilePath(fileDir.absolutePath()); //   назначение/plugins/
 
+  //                     path            filename
+  // [QTDIR(relDir)] + [plugins/... ] + fileName.dll
+  // [destDir ]      + [plugins/... ] + fileName.dll
   newFilePath= destDir.absoluteFilePath(path)+QDir::separator()+info.fileName();
   success= destDir.mkpath(path) && file.copy(newFilePath);
 

@@ -9,7 +9,7 @@ class TreeWidgetItem: public QTreeWidgetItem
 public:
 
     explicit TreeWidgetItem(QTreeWidget *parent = 0);
-    TreeWidgetItem(TreeWidgetItem * parent, int type = Type);
+    TreeWidgetItem(QTreeWidgetItem * parent, int type = Type);
     void setData(int column, int role, const QVariant &value);
 
 signals:
