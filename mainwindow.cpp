@@ -108,6 +108,8 @@ void MainWindow::on_pushButtonRun_clicked()
   process_->start("\""+ui->lineEditFilePath->text()+"\"");
 }
 //------------------------------------------------------
+// BUTTONs
+//------------------------------------------------------
 void MainWindow::on_pushButtonUpdate_clicked()
 {
   /* find Libraries  */
@@ -140,25 +142,35 @@ void MainWindow::on_pushButtonUpdate_clicked()
   }
 }
 //------------------------------------------------------
-void MainWindow::on_pushButtonCopy_clicked()
+QString replaceAliesesToDir(const QString& toDir,
+                            const QString& exeFileDir,
+                            const QString& baseName)
 {
-  QString toDir= ui->lineEditToDir->text();
-  QFile exeFile(ui->lineEditFilePath->text());
-
-  QFileInfo exeFileInfo(exeFile);
-  QString exeFileDir= exeFileInfo.dir().absolutePath();
-
+  QString result= toDir;
   if(toDir.isEmpty())
   {
-    toDir= exeFileDir;
+    result = exeFileDir;
   }
   else // replace alieses
   {
     QRegExp reDir("<ExeDir>");
     QRegExp reName("<BaseName>");
-    toDir.replace(reDir,exeFileDir);
-    toDir.replace(reName,exeFileInfo.baseName());
+    result.replace(reDir,exeFileDir);
+    result.replace(reName,baseName);
   }
+  return result;
+}
+//------------------------------------------------------
+void MainWindow::on_pushButtonCopy_clicked()
+{
+  QFile exeFile(ui->lineEditFilePath->text());
+  QFileInfo exeFileInfo(exeFile);
+  QString exeFileDir= exeFileInfo.dir().absolutePath();
+
+  QString toDir=
+      replaceAliesesToDir(ui->lineEditToDir->text(),
+                          exeFileDir,
+                          exeFileInfo.baseName());
 
   QDir dir(toDir);
   if(!dir.exists())
@@ -308,10 +320,34 @@ LibraryCollector::PidType MainWindow::startedProcessId()
       }
       else
       {
-        return -1;
+        return static_cast<LibraryCollector::PidType>(-1);
       }
     }
   }
+}
+//-----------------------------------------------------------------------------
+void MainWindow::on_pushButtonCopyToClipboard_clicked()
+{
+    QStringList list;
+    for(int i=0; i<ui->treeWidget->topLevelItemCount(); ++i)
+    {
+      QTreeWidgetItem* topLevalItem = ui->treeWidget->topLevelItem(i);
+      list.append(topLevalItem->text(0));
+      for(int j=0; j<topLevalItem->childCount(); ++j)
+      {
+        QTreeWidgetItem *childItem= topLevalItem->child(j);
+        list.append("\t"+childItem->text(0));
+      }
+    }
+    if(!list.empty())
+      QApplication::clipboard()->setText(list.join("\n"));
+}
+//-----------------------------------------------------------------------------
+void MainWindow::on_pushButtonClear_clicked()
+{
+  ui->textEditLog->clear();
+  //tree_->clearLibs();
+  on_comboBoxScript_currentIndexChanged("");
 }
 //-----------------------------------------------------------------------------
 void MainWindow::clear()
@@ -337,16 +373,38 @@ void MainWindow::processFinished(int, QProcess::ExitStatus)
   log_->addInfo(tr("Process finished."),"blue");
 }
 //-----------------------------------------------------------------------------
+// Tools
+//-----------------------------------------------------------------------------
 void MainWindow::on_toolButtonTo_clicked()
 {   
-  QString toDir =
-      QFileDialog::getExistingDirectory( this,
+  QFile exeFile(ui->lineEditFilePath->text());
+  QFileInfo exeFileInfo(exeFile);
+  QString exeFileDir= exeFileInfo.dir().absolutePath();
+
+  QString toDir=
+      replaceAliesesToDir(ui->lineEditToDir->text(),
+                          exeFileDir,
+                          exeFileInfo.baseName());
+
+  toDir = QFileDialog::getExistingDirectory( this,
                                          tr("Select directory"),
-                                         ui->lineEditFilePath->text(),
-                                         QFileDialog::ShowDirsOnly );
+                                         toDir,
+                                         QFileDialog::ShowDirsOnly);
 
   if(!toDir.isEmpty())
     ui->lineEditToDir->setText(toDir);
+}
+//-----------------------------------------------------------------------------
+void MainWindow::on_toolButtonQTDIR_clicked()
+{
+  QString qtDir =
+       QFileDialog::getExistingDirectory(this,
+                                         tr("Select directory"),
+                                         ui->lineEditQtDir->text(),
+                                         QFileDialog::ShowDirsOnly);
+
+  if(!qtDir.isEmpty())
+    ui->lineEditQtDir->setText(qtDir);
 }
 //-----------------------------------------------------------------------------
 void MainWindow::on_toolButtonFilePath_clicked()
@@ -401,30 +459,6 @@ void MainWindow::on_toolButtonAim_clicked()
   else
     log_.addError(error);
 #endif
-}
-//-----------------------------------------------------------------------------
-void MainWindow::on_pushButtonCopyToClipboard_clicked()
-{
-    QStringList list;
-    for(int i=0; i<ui->treeWidget->topLevelItemCount(); ++i)
-    {
-      QTreeWidgetItem* topLevalItem = ui->treeWidget->topLevelItem(i);
-      list.append(topLevalItem->text(0));
-      for(int j=0; j<topLevalItem->childCount(); ++j)
-      {
-        QTreeWidgetItem *childItem= topLevalItem->child(j);
-        list.append("\t"+childItem->text(0));
-      }
-    }
-    if(!list.empty())
-      QApplication::clipboard()->setText(list.join("\n"));
-}
-//-----------------------------------------------------------------------------
-void MainWindow::on_pushButtonClear_clicked()
-{
-  ui->textEditLog->clear();
-  //tree_->clearLibs();
-  on_comboBoxScript_currentIndexChanged("");
 }
 //-----------------------------------------------------------------------------
 void MainWindow::on_toolButtonScript_clicked()
@@ -487,9 +521,9 @@ void MainWindow::loadSettings()
 
   settings.beginGroup(tr("Other"));
   ui->checkBoxAddBin->setCheckState(
-        (Qt::CheckState)settings.value("addLibsDirToEnvironment").toInt() );
+        static_cast<Qt::CheckState>(settings.value("addLibsDirToEnvironment").toInt()) );
   ui->checkBoxAddPlugins->setCheckState(
-        (Qt::CheckState)settings.value("addPluginsDirToEnvironment").toInt() );
+        static_cast<Qt::CheckState>(settings.value("addPluginsDirToEnvironment").toInt()) );
   settings.endGroup();
 
 #ifdef Q_OS_WIN
@@ -514,4 +548,3 @@ void MainWindow::saveSettings()
   settings.endGroup();
 }
 //-----------------------------------------------------------------------------
-

@@ -51,8 +51,9 @@ private slots:
 
 
     void on_toolButtonScript_clicked();
-
     void on_comboBoxScript_currentIndexChanged(const QString &arg1);
+
+    void on_toolButtonQTDIR_clicked();
 
 private:
     void clear();

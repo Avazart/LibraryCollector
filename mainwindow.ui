@@ -45,7 +45,7 @@
        <widget class="QLineEdit" name="lineEditQtDir"/>
       </item>
       <item row="1" column="3">
-       <widget class="QToolButton" name="toolButtonLibs">
+       <widget class="QToolButton" name="toolButtonQTDIR">
         <property name="text">
          <string>...</string>
         </property>
