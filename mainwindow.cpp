@@ -127,7 +127,8 @@ void MainWindow::on_pushButtonUpdate_clicked()
 //  ui->treeWidget->setColumnCount(1);
 
   /* call update in JS */
-  jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text());
+  jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text().trimmed());
+  jsEngine_->globalObject().setProperty("FILEPATH",ui->lineEditFilePath->text().trimmed());
 
   QJSValue jsUpdateFunction = jsEngine_->globalObject().property("update");
   QJSValue result =
@@ -172,15 +173,17 @@ void MainWindow::on_pushButtonCopy_clicked()
                           exeFileDir,
                           exeFileInfo.baseName());
 
+  /* create dir if not exists */
   QDir dir(toDir);
   if(!dir.exists())
     dir.mkpath(tr("."));
 
-  if(QDir(toDir)!=QDir(exeFileDir))
-    exeFile.copy(toDir+QDir::separator()+exeFileInfo.fileName());
+  /* copy exe file */
+//  if(QDir(toDir)!=QDir(exeFileDir))
+//    exeFile.copy(toDir+QDir::separator()+exeFileInfo.fileName());
 
   /* call copy in js */
-  jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text());
+  jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text().trimmed());
 
   QJSValue jsCopyFunction = jsEngine_->globalObject().property("copy");
   QJSValue result = jsCopyFunction.call( QJSValueList()<<toDir);
@@ -248,8 +251,10 @@ QSharedPointer<QJSEngine> MainWindow::createJSEngine(const QString &scriptFileNa
   QJSValue jsDir = jsEngine->newQMetaObject<Dir>();
   jsEngine->globalObject().setProperty("Dir",jsDir);
 
-  jsEngine->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text());
+  jsEngine->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text().trimmed());
   jsEngine->globalObject().setProperty("SYSTEMROOT",systemRoot_);
+  jsEngine->globalObject().setProperty("FILEPATH",ui->lineEditFilePath->text().trimmed());
+
 
   QString os = "";
   #ifdef Q_OS_WIN

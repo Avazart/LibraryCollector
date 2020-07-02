@@ -47,7 +47,7 @@ Dir &Dir::operator=(const Dir &dir)
 
 Dir &Dir::operator=(const QString &path)
 {
-  dir_ = path;
+  dir_.setPath(path);
   return *this;
 }
 
@@ -146,25 +146,29 @@ void Dir::setNameFilters(const QStringList &nameFilters)
 
 Dir::Filters Dir::filter() const
 {
-  Dir::Filters filters_=  (int)dir_.filter();
+  Dir::Filters filters_=
+      static_cast<Dir::Filters>(static_cast<int>(dir_.filter()));
   return filters_;
 }
 
 void Dir::setFilter(Dir::Filters filter)
 {
-  QDir::Filters filter_=  (int)filter;
+  QDir::Filters filter_=
+      static_cast<QDir::Filters>(static_cast<int>(filter));
   dir_.setFilter(filter_);
 }
 
 Dir::SortFlags Dir::sorting() const
 {
-  Dir::SortFlags sorting_=  (int)dir_.sorting();
+  Dir::SortFlags sorting_=
+      static_cast<Dir::SortFlags>(static_cast<int>(dir_.sorting()));
   return sorting_;
 }
 
 void Dir::setSorting(Dir::SortFlags sort)
 {
-  QDir::SortFlags sort_= (int)sort;
+  QDir::SortFlags sort_=
+      static_cast<QDir::SortFlags>(static_cast<int>(sort));
   dir_.setSorting(sort_);
 }
 
@@ -175,7 +179,8 @@ uint Dir::count() const
 
 bool Dir::isEmpty(Dir::Filters filters) const
 {
-  QDir::Filters filters_=  (int)filters;
+  QDir::Filters filters_=
+      static_cast<QDir::Filters>(static_cast<int>(filters));
   return dir_.isEmpty(filters_);
 }
 
@@ -192,8 +197,8 @@ QStringList Dir::nameFiltersFromString(const QString &nameFilter)
 
 QStringList Dir::entryList1(Filters filters,Dir::SortFlags sort) const
 {
-  QDir::Filters filters_=  (int)filters;
-  QDir::SortFlags sort_=   (int)sort;
+  QDir::Filters filters_=  static_cast<QDir::Filters>(static_cast<int>(filters));
+  QDir::SortFlags sort_=   static_cast<QDir::SortFlags>(static_cast<int>(sort));
   return dir_.entryList(filters_,sort_);
 }
 
@@ -201,8 +206,8 @@ QStringList Dir::entryList2(const QStringList &nameFilters,
                             Dir::Filters filters,
                             Dir::SortFlags sort) const
 {
-  QDir::Filters filters_=  (int)filters;
-  QDir::SortFlags sort_=   (int)sort;
+  QDir::Filters filters_=  static_cast<QDir::Filters>(static_cast<int>(filters));
+  QDir::SortFlags sort_=   static_cast<QDir::SortFlags>(static_cast<int>(sort));
   return dir_.entryList(nameFilters,filters_,sort_);
 }
 

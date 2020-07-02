@@ -212,7 +212,7 @@ bool FileInfo::isBundle() const
 
 QString FileInfo::readLink() const
 {
-  return fileInfo_.readLink();
+  return fileInfo_.symLinkTarget();
 }
 
 QString FileInfo::symLinkTarget() const
@@ -247,7 +247,7 @@ qint64 FileInfo::size() const
 
 QDateTime FileInfo::created() const
 {
-  return fileInfo_.created();
+  return fileInfo_.birthTime();
 }
 
 QDateTime FileInfo::lastModified() const

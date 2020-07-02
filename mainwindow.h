@@ -22,8 +22,8 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
+  explicit MainWindow(QWidget *parent = Q_NULLPTR);
+  ~MainWindow() Q_DECL_OVERRIDE;
 
 protected:
     virtual void closeEvent(QCloseEvent *event)Q_DECL_OVERRIDE;
@@ -49,10 +49,10 @@ private slots:
     void on_pushButtonCopyToClipboard_clicked();
     void on_pushButtonClear_clicked();
 
-
-    void on_toolButtonScript_clicked();
     void on_comboBoxScript_currentIndexChanged(const QString &arg1);
 
+    // Tools
+    void on_toolButtonScript_clicked();
     void on_toolButtonQTDIR_clicked();
 
 private:
