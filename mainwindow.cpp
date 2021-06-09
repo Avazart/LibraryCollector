@@ -50,9 +50,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
   // availible js-files
   QDir jsDir("./js");
-  QFileInfoList files =  jsDir.entryInfoList(QStringList()<<"*.js",QDir::Files);
+  QFileInfoList files =
+      jsDir.entryInfoList(QStringList()<<"*.js", QDir::Files);
   for(int i=0; i<files.size(); ++i)
-     ui->comboBoxScript->addItem(files[i].fileName(),files[i].absoluteFilePath());
+     ui->comboBoxScript->addItem(files[i].fileName(),
+                                 files[i].absoluteFilePath());
 
   // Settings
   loadSettings();
@@ -101,7 +103,7 @@ void MainWindow::on_pushButtonRun_clicked()
   if(ui->checkBoxAddPlugins->isChecked())
   {
      const QString qtPluginsDir =  QDir::toNativeSeparators(qtDir+"/plugins");
-     enviroment.insert("QT_PLUGIN_PATH",qtPluginsDir);
+     enviroment.insert("QT_PLUGIN_PATH", qtPluginsDir);
   }
 
   process_->setEnvironment(enviroment.toStringList());
@@ -123,16 +125,21 @@ void MainWindow::on_pushButtonUpdate_clicked()
   }
   log_->addInfo(QString(tr("Found %1 libs.")).arg(libs.size()) );
 
-// ui->treeWidget->clear();
-//  ui->treeWidget->setColumnCount(1);
 
   /* call update in JS */
+
+  if(!jsEngine_)
+  {
+    log_->addError(tr("Js script is not valid!"));
+    return;
+  }
+
   jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text().trimmed());
   jsEngine_->globalObject().setProperty("FILEPATH",ui->lineEditFilePath->text().trimmed());
 
   QJSValue jsUpdateFunction = jsEngine_->globalObject().property("update");
   QJSValue result =
-      jsUpdateFunction.call( QJSValueList()<<jsEngine_->toScriptValue(libs));
+      jsUpdateFunction.call(QJSValueList()<<jsEngine_->toScriptValue(libs));
   if(result.isError())
   {
       log_->addError(
@@ -183,6 +190,12 @@ void MainWindow::on_pushButtonCopy_clicked()
 //    exeFile.copy(toDir+QDir::separator()+exeFileInfo.fileName());
 
   /* call copy in js */
+  if(!jsEngine_)
+  {
+    log_->addError(tr("Js script is not valid!"));
+    return;
+  }
+
   jsEngine_->globalObject().setProperty("QTDIR",ui->lineEditQtDir->text().trimmed());
 
   QJSValue jsCopyFunction = jsEngine_->globalObject().property("copy");
@@ -206,10 +219,15 @@ QString MainWindow::currentJsScript() const
 void MainWindow::on_comboBoxScript_currentIndexChanged(const QString &arg1)
 {
   Q_UNUSED(arg1);
-  jsEngine_ = createJSEngine(currentJsScript()); // change js-file
+  jsEngine_ = createJSEngine(currentJsScript()); // change js-file  
+  if(!jsEngine_)
+  {
+    log_->addError(tr("Js script is not valid!"));
+    return;
+  }
 
-  ui->pushButtonUpdate->setEnabled(jsEngine_);
-  ui->pushButtonCopy->setEnabled(jsEngine_);
+  ui->pushButtonUpdate->setEnabled(jsEngine_ != Q_NULLPTR);
+  ui->pushButtonCopy->setEnabled(jsEngine_   != Q_NULLPTR);
 }
 //------------------------------------------------------------
 QSharedPointer<QJSEngine> MainWindow::createJSEngine(const QString &scriptFileName)
@@ -475,7 +493,10 @@ void MainWindow::on_toolButtonScript_clicked()
                                    tr("js (*.js)")
                                    );
   if(!fileName.isEmpty())
+  {
     ui->comboBoxScript->setCurrentText(fileName);
+    on_comboBoxScript_currentIndexChanged(fileName);
+  }
 }
 //-----------------------------------------------------------------------------
 void MainWindow::loadSettings()
