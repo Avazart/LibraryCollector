@@ -1,6 +1,4 @@
 #include "wrappers.h"
-
-#include <QDebug>
 //-----------------------------------------------------------------------------------------
 //  Log
 //-----------------------------------------------------------------------------------------
@@ -217,8 +215,6 @@ bool Utils::patchFile(const QString &fileName,
   QFile file(fileName);
   if(!file.open(QIODevice::ReadWrite))
     return false;
-
-  qDebug()<<file.isSequential();
 
   const int bufferSize = 512;
   QByteArray buffer;

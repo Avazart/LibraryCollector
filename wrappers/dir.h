@@ -83,7 +83,6 @@ public:
   Q_INVOKABLE QString absolutePath() const;
   Q_INVOKABLE QString canonicalPath() const;
 
-  Q_INVOKABLE static void addResourceSearchPath(const QString &path);
 
   Q_INVOKABLE static void setSearchPaths(const QString &prefix, const QStringList &searchPaths);
   Q_INVOKABLE static void addSearchPath(const QString &prefix, const QString &path);

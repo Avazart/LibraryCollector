@@ -71,11 +71,6 @@ QString Dir::canonicalPath() const
    return dir_.canonicalPath();
 }
 
-/*static*/
-void Dir::addResourceSearchPath(const QString &path)
-{
-  return QDir::addResourceSearchPath(path);
-}
 
 /*static*/
 void Dir::setSearchPaths(const QString &prefix, const QStringList &searchPaths)

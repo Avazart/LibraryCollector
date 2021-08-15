@@ -3,9 +3,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-#include <QRegExp>
-
-#include <QDebug>
 
 namespace LibraryCollector
 {
@@ -75,32 +72,6 @@ void makeSymLinks(const QString& filePath,
        QFile(newLibFileInfo.fileName()).link(newSymLinkFileName);
      }
   }
-}
-//---------------------------------------------------------------
-bool isMSVClib(const QString& filePath)
-{
-  QRegExp re("MSVC[RP]\\d+.dll"); //  MSVCR*.dll и MSVCP*.dll
-  re.setMinimal(true);
-
-  QFile file(filePath);
-  QFileInfo info(file);
-
-  return re.exactMatch(info.fileName());
-}
-//---------------------------------------------------------------
-bool isMySQLlib(const QString& filePath)
-{
-#ifdef Q_OS_WIN
-  QRegExp re("libmysql\\d*\\.(dll)"); // libmysql.dll
-  re.setMinimal(true);
-#elif defined Q_OS_LINUX
-  QRegExp re("libmysql(client)?\\.(so(\\.\\d+){0,3})|(dll)"); // libmysqlclient.so.18.0.0
-#endif
-
-  QFile file(filePath);
-  QFileInfo info(file);
-
-  return re.exactMatch(info.fileName());
 }
 //------------------End my:: -------------------------------------------
 }

@@ -8,7 +8,8 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QCursor>
-#include <QRegExp>
+#include <QRegularExpression>
+
 #include <QThread>  //  QThread::usleep();
 #include <QClipboard>
 
@@ -30,18 +31,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
   /* QProcess */
   process_= new QProcess(this);
-  connect( process_, SIGNAL(error(QProcess::ProcessError)),
-           this,    SLOT(processError(QProcess::ProcessError))       );
+  connect( process_, &QProcess::errorOccurred,
+           this,     &MainWindow::processErrorOccurred);
 
-  connect( process_, SIGNAL(started()),
-           this,    SLOT(processStarted())  );
+  connect( process_, &QProcess::started,
+           this,     &MainWindow::processStarted);
 
-  connect( process_, SIGNAL(finished(int, QProcess::ExitStatus)),
-           this,    SLOT(processFinished(int, QProcess::ExitStatus))  );
+  connect( process_, &QProcess::finished,
+           this,     &MainWindow::processFinished);
 
   // Special button
-  connect(ui->toolButtonAim,SIGNAL(leftMouseRelease(QPoint)),
-          this, SLOT(on_AimRelease(QPoint)));
+  connect(ui->toolButtonAim, &ToolButton::leftMouseRelease,
+          this, &MainWindow::on_AimRelease);
 
   // JS Wrappers
   log_= new Log(ui->textEditLog);
@@ -161,10 +162,10 @@ QString replaceAliesesToDir(const QString& toDir,
   }
   else // replace alieses
   {
-    QRegExp reDir("<ExeDir>");
-    QRegExp reName("<BaseName>");
-    result.replace(reDir,exeFileDir);
-    result.replace(reName,baseName);
+    QRegularExpression reDir("<ExeDir>");
+    QRegularExpression reName("<BaseName>");
+    result.replace(reDir, exeFileDir);
+    result.replace(reName, baseName);
   }
   return result;
 }
@@ -216,10 +217,10 @@ QString MainWindow::currentJsScript() const
   return data.isNull()? ui->comboBoxScript->currentText() : data.toString();
 }
 //----------------------------------------------------------
-void MainWindow::on_comboBoxScript_currentIndexChanged(const QString &arg1)
+void MainWindow::on_comboBoxScript_currentTextChanged(const QString &arg1)
 {
   Q_UNUSED(arg1);
-  jsEngine_ = createJSEngine(currentJsScript()); // change js-file  
+  jsEngine_ = createJSEngine(currentJsScript()); // change js-file
   if(!jsEngine_)
   {
     log_->addError(tr("Js script is not valid!"));
@@ -273,7 +274,6 @@ QSharedPointer<QJSEngine> MainWindow::createJSEngine(const QString &scriptFileNa
   jsEngine->globalObject().setProperty("SYSTEMROOT",systemRoot_);
   jsEngine->globalObject().setProperty("FILEPATH",ui->lineEditFilePath->text().trimmed());
 
-
   QString os = "";
   #ifdef Q_OS_WIN
      os = "win";
@@ -304,7 +304,7 @@ LibraryCollector::PidType MainWindow::startedProcessId()
   if(processAlreadyStarted_)
   {
      #ifdef Q_OS_WIN
-        return  process_->pid()->dwProcessId;
+        return  process_->processId();
      #elif defined Q_OS_LINUX
         return  process_->pid();
       #endif
@@ -333,10 +333,12 @@ LibraryCollector::PidType MainWindow::startedProcessId()
       if(process_->waitForStarted())
       {
         #ifdef Q_OS_WIN
-             pid=  process_->pid()->dwProcessId;
-             WaitForInputIdle(process_->pid()->hProcess,5000);
+             pid=  process_->processId();
+             HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+             WaitForInputIdle(hProcess,5000);
+             CloseHandle(hProcess);
         #elif defined Q_OS_LINUX
-             pid=  process_->pid();
+             pid=  process_->processId();
         #endif
         QThread::usleep(500);
         return pid;
@@ -369,8 +371,7 @@ void MainWindow::on_pushButtonCopyToClipboard_clicked()
 void MainWindow::on_pushButtonClear_clicked()
 {
   ui->textEditLog->clear();
-  //tree_->clearLibs();
-  on_comboBoxScript_currentIndexChanged("");
+  on_comboBoxScript_currentTextChanged("");
 }
 //-----------------------------------------------------------------------------
 void MainWindow::clear()
@@ -379,7 +380,7 @@ void MainWindow::clear()
   ui->lineEditFilePath->clear();
 }
 //-----------------------------------------------------------------------------
-void MainWindow::processError(QProcess::ProcessError )
+void MainWindow::processErrorOccurred(QProcess::ProcessError )
 {
   log_->addError(process_->errorString());
 }
@@ -495,7 +496,7 @@ void MainWindow::on_toolButtonScript_clicked()
   if(!fileName.isEmpty())
   {
     ui->comboBoxScript->setCurrentText(fileName);
-    on_comboBoxScript_currentIndexChanged(fileName);
+    on_comboBoxScript_currentTextChanged(fileName);
   }
 }
 //-----------------------------------------------------------------------------
@@ -574,3 +575,9 @@ void MainWindow::saveSettings()
   settings.endGroup();
 }
 //-----------------------------------------------------------------------------
+
+
+
+
+
+

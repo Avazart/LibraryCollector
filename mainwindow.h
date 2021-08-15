@@ -1,8 +1,5 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
-#include <QDebug>
-
 #include <QMainWindow>
 #include <QProcess>
 #include <QJSEngine>
@@ -42,14 +39,14 @@ private slots:
     void on_AimRelease(QPoint pos);
 
     /* Process */
-    void processError(QProcess::ProcessError error);
+    void processErrorOccurred(QProcess::ProcessError error);
     void processStarted();
     void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
     void on_pushButtonCopyToClipboard_clicked();
     void on_pushButtonClear_clicked();
 
-    void on_comboBoxScript_currentIndexChanged(const QString &arg1);
+    void on_comboBoxScript_currentTextChanged(const QString &arg1);
 
     // Tools
     void on_toolButtonScript_clicked();

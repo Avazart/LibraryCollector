@@ -11,9 +11,6 @@ namespace LibraryCollector
                    const QString& baseDir= QString());
 
   void makeSymLinks(const QString& filePath,const QString &newFilePath);
-
-  bool isMSVClib(const QString &filePath);
-  bool isMySQLlib(const QString& filePath);
 }
 //---------------------------------------------------------------
 #endif // FILEFUNCTIONS_H

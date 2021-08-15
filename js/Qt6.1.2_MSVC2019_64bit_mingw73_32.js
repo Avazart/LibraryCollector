@@ -71,7 +71,7 @@ function update(libs)
 		}
 		else if (isMSVClib(libs[i]))
 			tree.addLib(msvcGroupIndex, libs[i],true)	
-		else if (isMySQL(libs[i]))
+		else if (isMySQL(libs[i]) || isPostgreSQL(libs[i]))
 			tree.addLib(dataBaseGroupIndex, libs[i],true);
         else if (isSSL(libs[i]))
 			tree.addLib(sslGroupIndex, libs[i],true);      
@@ -124,11 +124,11 @@ function copyLib(groupName, libName, toDir)
 
 	// Патчинг Qt5Core, изменение вшитой переменной qt_prfxpath=.
 	// http://www.riuson.com/blog/post/qtcore-hard-coded-paths
-	if(isQtCoreLib(libName))
-	{
-		if (!utils.patchFile(newFileName, "qt_prfxpath=", "."))
-			log.addError('Can not patch "' + newFileName + '"');
-	}
+	// if(isQtCoreLib(libName))
+	//{
+	//	if (!utils.patchFile(newFileName, "qt_prfxpath=", "."))
+	//		log.addError('Can not patch "' + newFileName + '"');
+	//}
 
 	if(os=="linux")
 		utils.makeSymLinks(libFilePath,newFilePath);
@@ -196,6 +196,22 @@ function isMINGWlib(libName)
 function isMySQL(libName)
 {
 	return baseName(libName).match(/libmysql\d*/i) // libmysql.dll
+}
+
+
+function isPostgreSQL(libName)
+{
+    /*
+	LIBPQ.dll
+	libintl-8.dll
+	libiconv-2.dll
+	libcrypto-1_1-x64.dll
+   */
+	libName = baseName(libName);
+	return libName.match(/libpq\d*?/i) ||	
+	       libName.match(/libintl-\d+D?/i) ||	       
+	       libName.match(/libiconv-\d+D?/i) ||
+		   libName.match(/libcrypto-.*?/i)
 }
 
 function isSSL(libName)
