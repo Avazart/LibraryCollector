@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect( process_, &QProcess::started,
            this,     &MainWindow::processStarted);
 
-  connect( process_, &QProcess::finished,
+  connect( process_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
            this,     &MainWindow::processFinished);
 
   // Special button
