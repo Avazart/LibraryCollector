@@ -19,7 +19,7 @@ bool isSubPath(const QString &dir, const QString &path)
      nativeDir += QDir::separator();
    }
 
-   return !nativePath.indexOf( nativeDir, Qt::CaseInsensitive );
+   return !nativePath.indexOf( nativeDir, 0, Qt::CaseInsensitive );
 }
 //---------------------------------------------------------------
 QString copyFile(const QString &filePath,
