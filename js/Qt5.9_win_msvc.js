@@ -52,7 +52,7 @@ function update(libs)
 		else if (utils.isSubPath(QTDIR + '/qml', libs[i]))
 		{
 			tree.addLib(qmlGroupIndex, libs[i], true);
-			var qmlDirFile = absolutePath(lib) + "/qmldir";
+			var qmlDirFile = absolutePath(libs[i]) + "/qmldir";
 			if (fileExists(qmlDirFile))
 				tree.addLib(qmlGroupIndex, qmlDirFile, true);
 		}
