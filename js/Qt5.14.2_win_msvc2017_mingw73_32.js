@@ -65,7 +65,7 @@ function update(libs)
 		else if (utils.isSubPath(QTDIR + '/qml', libs[i]))
 		{
 			tree.addLib(qmlGroupIndex, libs[i], true);
-			let qmlDirFile = absolutePath(lib) + "/qmldir";
+			let qmlDirFile = absolutePath(libs[i]) + "/qmldir";
 			if (fileExists(qmlDirFile))
 				tree.addLib(qmlGroupIndex, qmlDirFile, true);
 		}
@@ -200,7 +200,7 @@ function isMySQL(libName)
 
 function isSSL(libName)
 {
-	return baseName(libName).match(/libeay|libssl|ssleay\d*/i) // libeay32.dll  libssl32.dll ssleay32.dll
+	return baseName(libName).match(/libeay|libssl|ssleay|libcrypto\d*/i) // libeay32.dll  libssl32.dll ssleay32.dll libssl-1_1-x64.dll libcrypto-1_1-x64.dll
 }
 
 function isQtCoreLib(libName)
